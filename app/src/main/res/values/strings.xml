@@ -2,7 +2,17 @@
 <resources>
 
     <string name="app_name">Budger</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- activity_submit_budget -->
+    <string name="total_budget_amount">Budget Amount:</string>
+    <string name="submit_budget">Submit Budget</string>
+    <string name="title_activity_daily">DailyActivity</string>
+    
+    <!-- activity_daily -->
+    <string name="daily_budget_amount">Daily Budget:</string>
+    <string name="daily_budget_amount_value"></string>
+    <string name="spendable">Spendable:</string>
+    <string name="spendable_value"></string>
 
 </resources>
