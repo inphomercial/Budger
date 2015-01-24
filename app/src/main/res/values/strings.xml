@@ -3,6 +3,7 @@
 
     <string name="app_name">Budger</string>
     <string name="action_settings">Settings</string>
+    <string name="blank_string"></string>
 
     <!-- activity_submit_budget -->
     <string name="total_budget_amount">Budget Amount:</string>
@@ -11,8 +12,10 @@
     
     <!-- activity_daily -->
     <string name="daily_budget_amount">Daily Budget:</string>
-    <string name="daily_budget_amount_value"></string>
+    <string name="daily_budget_amount_value_placeholder">$0</string>
     <string name="spendable">Spendable:</string>
-    <string name="spendable_value"></string>
+    <string name="spendable_value_placeholder">$0</string>
+    <string name="date_placeholder">date placeholder</string>
+    <string name="submit_expense_button">Add New Expense</string>
 
 </resources>

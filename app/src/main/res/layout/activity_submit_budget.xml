@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="10"
-        android:id="@+id/txtViewBudgetAmount"
+        android:id="@+id/submit_budget_amount"
         android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true" />
 
@@ -37,8 +37,9 @@
         android:layout_height="wrap_content"
         android:text="@string/submit_budget"
         android:id="@+id/submit_budget_button"
-        android:layout_below="@+id/txtViewBudgetAmount"
+        android:layout_below="@+id/submit_budget_amount"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp" />
+        android:layout_marginTop="36dp"
+        android:onClick="submitBudget"/>
 
 </RelativeLayout>

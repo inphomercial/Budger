@@ -1,17 +1,44 @@
 package com.greyfieldstudios.budger;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 
 public class SubmitBudgetActivity extends Activity {
+
+    //private Integer submit_budget_amount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submit_budget);
+    }
+
+    public void submitBudget(View view) {
+
+        TextView amount = (TextView) findViewById(R.id.submit_budget_amount);
+        String amount_string = amount.getText().toString();
+
+        Budget budget = new Budget();
+        budget.takeBudgetCalculateDaily(Integer.parseInt(amount_string));
+
+        Log.d("debug", budget.getTotalBudget().toString());
+        Log.d("debug", budget.getDaily().toString());
+        Log.d("debug", budget.getRemaining().toString());
+
+        Intent intent = new Intent(this, DailyActivity.class);
+        intent.putExtra("total_budget", budget.getTotalBudget().toString());
+        intent.putExtra("daily", budget.getDaily().toString());
+        intent.putExtra("remaining", budget.getRemaining().toString());
+        startActivity(intent);
     }
 
     @Override

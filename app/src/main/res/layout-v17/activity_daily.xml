@@ -1,5 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -7,20 +7,20 @@
     tools:context="com.greyfieldstudios.budger.DailyActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:text="@string/app_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="35sp"
-        android:paddingTop="25dp"
-        android:id="@+id/textView" />
+        android:paddingTop="25dp" />
 
     <TextView
+        android:id="@+id/textView3"
+        android:text="@string/daily_budget_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/daily_budget_amount"
-        android:id="@+id/textView3"
         android:layout_marginTop="21dp"
         android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
@@ -29,21 +29,22 @@
         android:layout_marginStart="68dp" />
 
     <TextView
+        android:id="@+id/textView4"
+        android:text="@string/spendable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/spendable"
-        android:id="@+id/textView4"
         android:layout_marginTop="13dp"
         android:layout_below="@+id/textView3"
         android:layout_alignLeft="@+id/textView3"
-        android:layout_alignStart="@+id/textView3" />
+        android:layout_alignStart="@+id/textView3"
+        android:paddingBottom="10dp" />
 
     <TextView
+        android:id="@+id/daily_budget_amount_value"
+        android:text="@string/daily_budget_amount_value_placeholder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/daily_budget_amount_value"
-        android:id="@+id/daily_budget_amount_value"
         android:layout_marginLeft="22dp"
         android:layout_marginStart="22dp"
         android:layout_alignBottom="@+id/textView3"
@@ -61,13 +62,72 @@
         android:id="@+id/textView5" />
 
     <TextView
+        android:id="@+id/date_text"
+        android:text="@string/date_placeholder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="date here"
-        android:id="@+id/date_text"
+        android:textAlignment="center"
+        android:paddingTop="15dp"
         android:layout_below="@+id/textView5"
-        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_media_previous"
+        android:onClick="getPreviousDay"
+        android:layout_below="@+id/textView5"
+        android:layout_toStartOf="@+id/textView4" />
+
+    <ImageButton
+        android:id="@+id/forwardButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_media_next"
+        android:onClick="getNextDay"
+        android:layout_below="@+id/textView5"
+        android:layout_alignEnd="@+id/textView5"
+        android:layout_marginEnd="19dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/submit_expense_button"
+        android:id="@+id/submitExpenseButton"
+        android:layout_marginBottom="23dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/spendable_value"
+        android:text="@string/daily_budget_amount_value_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView4"
+        android:layout_alignStart="@+id/daily_budget_amount_value" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/expense_amount_text"
+        android:hint="Expense Amount"
+        android:layout_marginBottom="24dp"
+        android:layout_above="@+id/expense_desc_text"
+        android:layout_alignStart="@+id/backButton" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/expense_desc_text"
+        android:layout_marginBottom="30dp"
+        android:hint="Expense Desc"
+
+        android:layout_above="@+id/submitExpenseButton"
+        android:layout_alignEnd="@+id/forwardButton"
+        android:layout_alignStart="@+id/expense_amount_text" />
 
 </RelativeLayout>

@@ -11,15 +11,17 @@
             android:name=".SubmitBudgetActivity"
             android:label="@string/app_name" >
 
-        </activity>
-        <activity
-            android:name=".DailyActivity"
-            android:label="@string/title_activity_daily" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".DailyActivity"
+            android:label="@string/title_activity_daily" >
+
         </activity>
     </application>
 
