@@ -1,5 +1,6 @@
 package com.greyfieldstudios.budger;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -45,7 +46,7 @@ public class SignUpActivity extends ActionBarActivity {
         String pass2 = password2EditText.getText().toString().trim();
 
         boolean validationError = false;
-        StringBuilder validationErrorMessage = new StringBuilder("Field is required ");
+        StringBuilder validationErrorMessage = new StringBuilder("");
 
         // Validate Email field
         if(email.length() == 0) {
@@ -54,15 +55,30 @@ public class SignUpActivity extends ActionBarActivity {
         }
 
         // Validate Passwords
+        if(pass1.length() == 0) {
+            validationError = true;
+            validationErrorMessage.append("Password field cannot be blank");
+        }
+
+        if(pass2.length() == 0) {
+            validationError = true;
+            validationErrorMessage.append("Password field cannot be blank");
+        }
+
         if(!pass1.equals(pass2)) {
             validationError = true;
             validationErrorMessage.append("Passwords dont match!");
         }
 
         if(validationError) {
-            Toast.makeText(SignUpActivity.this, validationErrorMessage.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(SignUpActivity.this, validationErrorMessage.toString(), Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // Setup a progress dialog
+        final ProgressDialog dialog = new ProgressDialog(SignUpActivity.this);
+        dialog.setMessage("Signup in progress");
+        dialog.show();
 
         // Setup a new parse user
         ParseUser user = new ParseUser();
@@ -74,6 +90,7 @@ public class SignUpActivity extends ActionBarActivity {
             @Override
             public void done(ParseException e) {
                 // Dismiss the dialog
+                dialog.dismiss();
 
                 if(e != null) {
                     // Show the error message
@@ -82,7 +99,6 @@ public class SignUpActivity extends ActionBarActivity {
                     // Start an intent for the dispach activity
                     Intent intent = new Intent(SignUpActivity.this, SubmitBudgetActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | intent.FLAG_ACTIVITY_NEW_TASK);
-
                     startActivity(intent);
                 }
             }
@@ -93,7 +109,7 @@ public class SignUpActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_signup, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -105,9 +121,9 @@ public class SignUpActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

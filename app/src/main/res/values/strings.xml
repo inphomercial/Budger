@@ -5,6 +5,12 @@
     <string name="action_settings">Settings</string>
     <string name="blank_string"></string>
 
+    <!-- Menu items -->
+    <string name="logout">Logout</string>
+
+    <!-- activity_login -->
+    <string name="button_login">Login</string>
+
     <!-- activity_submit_budget -->
     <string name="total_budget_amount">Budget Amount:</string>
     <string name="submit_budget">Submit Budget</string>
@@ -19,5 +25,8 @@
     <string name="submit_expense_button">Add New Expense</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_dispatch">DispatchActivity</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
 
 </resources>

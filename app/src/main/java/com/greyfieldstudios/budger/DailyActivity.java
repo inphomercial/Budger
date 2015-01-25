@@ -101,17 +101,17 @@ public class DailyActivity extends ActionBarActivity {
     }
 
     public void getPreviousDay(View view) {
-        Log.d("debug","Clicked on previous day");
+        Log.d(Application.APPTAG,"Clicked on previous day");
     }
 
     public void getNextDay(View view) {
-        Log.d("debug", "Click on next day");
+        Log.d(Application.APPTAG, "Click on next day");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_daily, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -123,9 +123,9 @@ public class DailyActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.log) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
