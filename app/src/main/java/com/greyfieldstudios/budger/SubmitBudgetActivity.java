@@ -9,6 +9,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.parse.Parse;
+import com.parse.ParseObject;
+
 import org.w3c.dom.Text;
 
 
@@ -20,6 +23,10 @@ public class SubmitBudgetActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submit_budget);
+
+        // Enable Local Datastore Using Parse.
+        Parse.enableLocalDatastore(this);
+        Parse.initialize(this, "vx1fXJYudP1Hp1DrnRsnncRM6kL0j2ONe955Hs89", "phliaYGcy8Vw198MaMI4WCTC51CXBZ9JjcQfwloh");
     }
 
     public void submitBudget(View view) {
@@ -34,10 +41,17 @@ public class SubmitBudgetActivity extends Activity {
         Log.d("debug", budget.getDaily().toString());
         Log.d("debug", budget.getRemaining().toString());
 
+        // Save data to parse
+        ParseObject budger = new ParseObject("Budger");
+        budger.put("total_budger", budget.getTotalBudget().toString());
+        budger.put("daily", budget.getDaily().toString());
+        budger.put("remaining", budget.getRemaining().toString());
+        budger.saveInBackground();
+
         Intent intent = new Intent(this, DailyActivity.class);
-        intent.putExtra("total_budget", budget.getTotalBudget().toString());
-        intent.putExtra("daily", budget.getDaily().toString());
-        intent.putExtra("remaining", budget.getRemaining().toString());
+        //intent.putExtra("total_budget", budget.getTotalBudget().toString());
+        //intent.putExtra("daily", budget.getDaily().toString());
+        //intent.putExtra("remaining", budget.getRemaining().toString());
         startActivity(intent);
     }
 
