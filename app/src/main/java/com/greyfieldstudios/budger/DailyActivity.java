@@ -7,14 +7,32 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 
 public class DailyActivity extends ActionBarActivity {
+
+    ArrayList expenses;
+
+    TextView tvDaily;
+    TextView tvSpendable;
+    TextView expenseAmount;
+    TextView expenseDesc;
+
+    String remaining;
+
+    ListView layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,19 +45,59 @@ public class DailyActivity extends ActionBarActivity {
         TextView dateText = (TextView) findViewById(R.id.date_text);
         dateText.setText(sdf.format(date));
 
+        // Create the expenses array
+        expenses = new ArrayList();
+
         // 1. get passed intent
         Intent intent = getIntent();
 
         // 2. get string data from intent
         String daily_string = intent.getStringExtra("daily");
-        String remaining_string = intent.getStringExtra("remaining");
+        remaining = intent.getStringExtra("remaining");
 
         // 3. get references to each textView
-        TextView tvDaily = (TextView) findViewById(R.id.daily_budget_amount_value);
+        tvDaily = (TextView) findViewById(R.id.daily_budget_amount_value);
         tvDaily.setText("$ " + daily_string);
 
-        TextView tvSpendable = (TextView) findViewById(R.id.spendable_value);
-        tvSpendable.setText("$ " + remaining_string);
+        tvSpendable = (TextView) findViewById(R.id.spendable_value);
+        tvSpendable.setText("$ " + remaining);
+    }
+
+    public void addExpense(View view) {
+
+        // Get ListView
+        layout = (ListView) findViewById(R.id.expenseListView);
+
+        // Get Expense Amount
+        expenseAmount = (TextView) findViewById(R.id.expense_amount_text);
+
+        // Get Expense Desc
+        expenseDesc = (TextView) findViewById(R.id.expense_desc_text);
+
+        // Add to the expenses array
+        expenses.add("$" + expenseAmount.getText().toString() + " (" + expenseDesc.getText().toString() + ")");
+
+        // Rebuild ListView adapter list
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, expenses);
+        layout.setAdapter(adapter);
+
+        // Reset Fields
+        this.clearFields();
+
+        // Update Budget amount
+        /*int remaining_int = Integer.parseInt(remaining);
+
+        // Get Expense Amount
+        expenseAmount = (TextView) findViewById(R.id.expense_amount_text);
+        String ex = expenseAmount.getText().toString();
+        int expense_amount = Integer.parseInt(ex);
+        remaining_int -= expense_amount;
+        tvSpendable.setText("$ " + remaining_int);*/
+    }
+
+    private void clearFields() {
+        expenseAmount.setText("");
+        expenseDesc.setText("");
     }
 
     public void getPreviousDay(View view) {
@@ -71,4 +129,16 @@ public class DailyActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /*JSONObject object = new JSONObject();
+        try {
+            object.put("name", "Jack Hack");
+            object.put("score", new Integer(200));
+            object.put("current", new Double(152.32));
+            object.put("nickname", "Hacker");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("debug", object.toString());*/
 }
