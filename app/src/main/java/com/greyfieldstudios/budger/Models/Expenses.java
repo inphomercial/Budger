@@ -1,17 +1,44 @@
-package com.greyfieldstudios.budger;
+package com.greyfieldstudios.budger.Models;
 
-import android.content.Intent;
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.io.Serializable;
+import com.parse.ParseClassName;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 /**
  * Created by tenderbranson on 1/23/15.
  */
-public class Budget {
 
-    private Integer total_budget;
+@ParseClassName("Expenses")
+public class Expenses extends ParseObject {
+
+    public void setAmount(int amount) {
+        put("amount", amount);
+    }
+
+    public void setDesc(String desc) {
+        put("desc", desc);
+    }
+
+    public void setUser(ParseUser user) {
+        put("user", user);
+    }
+
+    /* public String getExpense() {
+        return getString("expense");
+    }*/
+
+    /*public ParseUser getUser() {
+        return getParseUser("user");
+    }*/
+
+    public static ParseQuery<Expenses> getQuery() {
+        return ParseQuery.getQuery(Expenses.class);
+    }
+
+
+
+    /*private Integer total_budget;
     private Integer daily;
     private Integer remaining;
 
@@ -50,6 +77,6 @@ public class Budget {
 
     private void setRemaining(Integer remaining) {
         this.remaining = remaining;
-    }
+    }*/
 
 }

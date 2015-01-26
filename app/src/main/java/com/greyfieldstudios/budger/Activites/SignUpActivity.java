@@ -1,4 +1,4 @@
-package com.greyfieldstudios.budger;
+package com.greyfieldstudios.budger.Activites;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -25,13 +25,13 @@ public class SignUpActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        setContentView(com.greyfieldstudios.budger.R.layout.activity_sign_up);
 
-        usernameEditText = (EditText) findViewById(R.id.editTextEmail);
-        password1EditText = (EditText) findViewById(R.id.editTextPassword1);
-        password2EditText = (EditText) findViewById(R.id.editTextPassword2);
+        usernameEditText = (EditText) findViewById(com.greyfieldstudios.budger.R.id.editTextEmail);
+        password1EditText = (EditText) findViewById(com.greyfieldstudios.budger.R.id.editTextPassword1);
+        password2EditText = (EditText) findViewById(com.greyfieldstudios.budger.R.id.editTextPassword2);
 
-        Button signupButton = (Button) findViewById(R.id.buttonSignup);
+        Button signupButton = (Button) findViewById(com.greyfieldstudios.budger.R.id.buttonSignup);
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,7 +109,7 @@ public class SignUpActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(com.greyfieldstudios.budger.R.menu.menu_main, menu);
         return true;
     }
 
