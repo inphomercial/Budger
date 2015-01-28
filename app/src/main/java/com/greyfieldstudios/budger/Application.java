@@ -1,6 +1,5 @@
 package com.greyfieldstudios.budger;
 
-import android.content.Context;
 import android.content.Intent;
 
 import com.greyfieldstudios.budger.Activites.DispatchActivity;
@@ -8,7 +7,6 @@ import com.greyfieldstudios.budger.Models.Budget;
 import com.greyfieldstudios.budger.Models.Expenses;
 import com.parse.Parse;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 /**
  * Created by inpho on 1/25/2015.

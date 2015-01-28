@@ -26,8 +26,6 @@ public class DispatchActivity extends Activity {
 
         // Check if there is a current user info
         if (ParseUser.getCurrentUser() != null) {
-            // If user already has a budget send to DailyActiviy
-            Boolean results;
             ParseQuery<ParseObject> budget_query = new ParseQuery<ParseObject>("Budget");
             budget_query.whereEqualTo("user", ParseUser.getCurrentUser());
             try {

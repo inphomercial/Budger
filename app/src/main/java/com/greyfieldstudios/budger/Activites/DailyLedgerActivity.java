@@ -2,6 +2,8 @@ package com.greyfieldstudios.budger.Activites;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.provider.SyncStateContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -90,13 +92,23 @@ public class DailyLedgerActivity extends ActionBarActivity {
 
                             if(expense_cal.get(Calendar.DAY_OF_MONTH) == i) {
                                 expense_total += expenses.getInt("amount");
-                                continue;
+                                //continue;
                             } else {
                                 Log.d("App", "No expenses for day " + c.get(Calendar.DAY_OF_MONTH));
                             }
                         }
 
-                        adapter.add(day_of_week + " " + day_of_month + " // Total Spent: $" + Integer.toString(expense_total));
+                        TextView tv = new TextView(getApplicationContext());
+                        tv.setText(day_of_week + " " + day_of_month + " // Total Spent: $" + Integer.toString(expense_total));
+
+                        // For current date make the font bold
+                        if(current_date == day_of_month) {
+                           tv.setTypeface(null, Typeface.BOLD);
+                            tv.setTextColor(Color.RED);
+                        }
+
+                        // Finally add the textview tot he adapter.
+                        adapter.add(tv.getText().toString());
 
                         // Get ListView and set adapter
                         ListView layout = (ListView) findViewById(com.greyfieldstudios.budger.R.id.dailyLedgerSums);

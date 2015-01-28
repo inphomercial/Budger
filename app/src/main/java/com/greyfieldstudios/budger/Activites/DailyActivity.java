@@ -32,7 +32,9 @@ import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 
@@ -50,6 +52,8 @@ public class DailyActivity extends ActionBarActivity {
     List<ParseObject> eq;
     List<ParseObject> bq;
 
+    Calendar selected_date;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,10 +63,11 @@ public class DailyActivity extends ActionBarActivity {
         expenseDesc = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_desc_text);
 
         // Setting the date place holder with todays date
-        Date date = new Date();
+        selected_date = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
         TextView dateText = (TextView) findViewById(com.greyfieldstudios.budger.R.id.date_text);
-        dateText.setText(sdf.format(date));
+        //dateText.setText(sdf.format(date));
+        dateText.setText(sdf.format(selected_date.getTime()));
 
         // Show currently logged in users name
         loggedInUser = ParseUser.getCurrentUser().getUsername();
@@ -70,7 +75,7 @@ public class DailyActivity extends ActionBarActivity {
         loggingInUser.setText(loggedInUser);
 
         // Get Parse Data for user
-        gatherParseDataForUser();
+        gatherParseDataForUser(selected_date);
 
         // Setup the add expense button
         Button submit = (Button) findViewById(com.greyfieldstudios.budger.R.id.submitExpenseButton);
@@ -82,15 +87,31 @@ public class DailyActivity extends ActionBarActivity {
         });
     }
 
-    private void gatherParseDataForUser() {
+    private void gatherParseDataForUser(Calendar selected_date) {
+
+        Log.d("App", "Gathering Data for the date of " + selected_date.getTime());
 
         final ProgressDialog dialog = new ProgressDialog(DailyActivity.this);
         dialog.setMessage("Getting user data");
         dialog.show();
 
+        // Build a day start and day end
+        Calendar midnight = selected_date;
+        // Reset hour, minutes, seconds and millis
+        midnight.set(Calendar.HOUR_OF_DAY, 0);
+        midnight.set(Calendar.MINUTE, 0);
+        midnight.set(Calendar.SECOND, 0);
+        // Build Elevenfiftynine
+        Calendar elevenfiftynine = selected_date;
+        elevenfiftynine.set(Calendar.HOUR_OF_DAY, 23);
+        elevenfiftynine.set(Calendar.MINUTE, 59);
+        elevenfiftynine.set(Calendar.SECOND, 59);
+
         ParseObject user = ParseUser.getCurrentUser();
         ParseQuery<ParseObject> expense_query = new ParseQuery<ParseObject>("Expenses");
         expense_query.whereEqualTo("user", user);
+        expense_query.whereGreaterThan("createdAt", midnight.getTime());
+        expense_query.whereLessThan("createdAt", elevenfiftynine.getTime());
 
         ParseQuery<ParseObject> budget_query = new ParseQuery<ParseObject>("Budget");
         budget_query.whereEqualTo("user", user);
@@ -184,10 +205,34 @@ public class DailyActivity extends ActionBarActivity {
         //startActivity(new Intent(DailyActivity.this, DailyActivity.class));
     }
 
-    public void getPreviousDay(View view) { Log.d(Application.APPTAG,"Clicked on previous day"); }
+    public void getPreviousDay(View view) {
+        Log.d(Application.APPTAG,"Clicked on previous day");
+        //Calendar previous_day = Calendar.getInstance();
+        Calendar previous_day = selected_date;
+        previous_day.add(Calendar.DAY_OF_MONTH, -1);
+
+        gatherParseDataForUser(previous_day);
+
+        // Setting the date place holder with todays date
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        TextView dateText = (TextView) findViewById(com.greyfieldstudios.budger.R.id.date_text);
+        dateText.setText(sdf.format(previous_day.getTime()));
+
+    }
 
     public void getNextDay(View view) {
         Log.d(Application.APPTAG, "Click on next day");
+
+        //Calendar previous_day = Calendar.getInstance();
+        Calendar previous_day = selected_date;
+        previous_day.add(Calendar.DAY_OF_MONTH, 1);
+
+        gatherParseDataForUser(previous_day);
+
+        // Setting the date place holder with todays date
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        TextView dateText = (TextView) findViewById(com.greyfieldstudios.budger.R.id.date_text);
+        dateText.setText(sdf.format(previous_day.getTime()));
     }
 
     public void logout() {
