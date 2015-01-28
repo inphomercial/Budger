@@ -1,6 +1,7 @@
 package com.greyfieldstudios.budger.Activites;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -24,6 +27,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +54,9 @@ public class DailyActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(com.greyfieldstudios.budger.R.layout.activity_daily);
+
+        expenseAmount = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_amount_text);
+        expenseDesc = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_desc_text);
 
         // Setting the date place holder with todays date
         Date date = new Date();
@@ -151,12 +159,29 @@ public class DailyActivity extends ActionBarActivity {
             @Override
             public void done(com.parse.ParseException e) {
                 dialog.dismiss();
-                finish();
             }
         });
 
+        // Modify days remaining
+        tvSpendable = (TextView) findViewById(com.greyfieldstudios.budger.R.id.spendable_value);
+        int tvSpendableValue = Integer.parseInt(tvSpendable.getText().toString());
+        int total = tvSpendableValue - expense_amount;
+        tvSpendable.setText(Integer.toString(total));
+
+        // Clear Expense fields
+        expenseAmount = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_amount_text);
+        expenseDesc = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_desc_text);
+        expenseAmount.setText("");
+        expenseDesc.setText("");
+
+        // Remove focus from fields
+        layout.requestFocus();
+
+        // Hide keyboard
+        hideKeyboard();
+
         // Restart current activity to pickup new changes
-        startActivity(new Intent(DailyActivity.this, DailyActivity.class));
+        //startActivity(new Intent(DailyActivity.this, DailyActivity.class));
     }
 
     public void getPreviousDay(View view) { Log.d(Application.APPTAG,"Clicked on previous day"); }
@@ -170,6 +195,15 @@ public class DailyActivity extends ActionBarActivity {
         Intent intent = new Intent(DailyActivity.this, DispatchActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    private void hideKeyboard() {
+        // Check if no view has focus:
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     @Override
@@ -189,6 +223,11 @@ public class DailyActivity extends ActionBarActivity {
         // Logout
         if (id == com.greyfieldstudios.budger.R.id.menu_logout) {
             logout();
+        }
+
+        // Daily Ledger
+        if(id == com.greyfieldstudios.budger.R.id.daily) {
+            startActivity(new Intent(this, DailyLedgerActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
