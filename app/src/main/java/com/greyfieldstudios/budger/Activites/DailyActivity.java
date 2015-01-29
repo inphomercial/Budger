@@ -17,7 +17,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.greyfieldstudios.budger.Application;
+import com.greyfieldstudios.budger.Constants;
 import com.greyfieldstudios.budger.Models.Expenses;
+import com.greyfieldstudios.budger.R;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.Parse;
@@ -54,6 +56,8 @@ public class DailyActivity extends ActionBarActivity {
 
     Calendar selected_date;
 
+    Menu menu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +91,7 @@ public class DailyActivity extends ActionBarActivity {
         });
     }
 
-    private void gatherParseDataForUser(Calendar selected_date) {
+    private void gatherParseDataForUser(final Calendar selected_date) {
 
         Log.d("App", "Gathering Data for the date of " + selected_date.getTime());
 
@@ -95,58 +99,74 @@ public class DailyActivity extends ActionBarActivity {
         dialog.setMessage("Getting user data");
         dialog.show();
 
-        // Build a day start and day end
+        // Take current selected_date and set its hour/minute/second to 0 (Very start of the day)
         Calendar midnight = selected_date;
-        // Reset hour, minutes, seconds and millis
         midnight.set(Calendar.HOUR_OF_DAY, 0);
         midnight.set(Calendar.MINUTE, 0);
         midnight.set(Calendar.SECOND, 0);
-        // Build Elevenfiftynine
+
+        Log.d("App", midnight.getTime().toString());
+
+        // Take current selected_date and set its hour/minute/second to 23/59/59 (Very end of the day)
         Calendar elevenfiftynine = selected_date;
         elevenfiftynine.set(Calendar.HOUR_OF_DAY, 23);
         elevenfiftynine.set(Calendar.MINUTE, 59);
         elevenfiftynine.set(Calendar.SECOND, 59);
 
+        Log.d("App", elevenfiftynine.getTime().toString());
+
         ParseObject user = ParseUser.getCurrentUser();
-        ParseQuery<ParseObject> expense_query = new ParseQuery<ParseObject>("Expenses");
-        expense_query.whereEqualTo("user", user);
-        expense_query.whereGreaterThan("createdAt", midnight.getTime());
-        expense_query.whereLessThan("createdAt", elevenfiftynine.getTime());
 
-        ParseQuery<ParseObject> budget_query = new ParseQuery<ParseObject>("Budget");
-        budget_query.whereEqualTo("user", user);
+        // Budget Data Query
+        ParseQuery<ParseObject> budget_query = new ParseQuery<ParseObject>(Constants.PARSE_BUDGET_OBJECT);
+        budget_query.whereEqualTo(Constants.PARSE_USER, user);
+        budget_query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject parseObject, ParseException e) {
+                tvDaily = (TextView) findViewById(com.greyfieldstudios.budger.R.id.daily_budget_amount_value);
+                tvDaily.setText(Integer.toString(parseObject.getInt(Constants.PARSE_DAILY_BUDGET)));
 
-        try {
-            eq = expense_query.find();
-            budget_query.getFirstInBackground(new GetCallback<ParseObject>() {
-                @Override
-                public void done(ParseObject parseObject, ParseException e) {
-                    tvDaily = (TextView) findViewById(com.greyfieldstudios.budger.R.id.daily_budget_amount_value);
-                    tvDaily.setText(Integer.toString(parseObject.getInt("daily_budget")));
+                tvSpendable = (TextView) findViewById(com.greyfieldstudios.budger.R.id.spendable_value);
+                tvSpendable.setText(Integer.toString(parseObject.getInt(Constants.PARSE_REMAINING)));
+            }
+        });
 
-                    tvSpendable = (TextView) findViewById(com.greyfieldstudios.budger.R.id.spendable_value);
-                    tvSpendable.setText(Integer.toString(parseObject.getInt("remaining")));
-                }
-            });
-        } catch (ParseException e) {
-            Log.e("Error", e.getMessage());
-        }
+        // Initialize ListView & Adapter
+        layout = (ListView) findViewById(com.greyfieldstudios.budger.R.id.expenseListView);
+        layout.setAdapter(null);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+
+        // Expense Data Query
+        ParseQuery<ParseObject> expense_query = new ParseQuery<ParseObject>(Constants.PARSE_EXPENSES_OBJECT);
+        expense_query.whereEqualTo(Constants.PARSE_USER, user);
+        expense_query.findInBackground(new FindCallback<ParseObject>() {
+           public void done(List<ParseObject> objects, ParseException e) {
+               if (e == null) {
+
+                   for(ParseObject expenses : objects) {
+
+                       // Convert ParseObject Date to Calendar to compare
+                       Date expense_date = expenses.getCreatedAt();
+                       Calendar expense_cal = Calendar.getInstance();
+                       expense_cal.setTime(expense_date);
+
+                       // Compare selected_date against each of the ParseObjects
+                       if(selected_date.get(Calendar.DAY_OF_MONTH) == expense_cal.get(Calendar.DAY_OF_MONTH)) {
+                           adapter.add("$" + Integer.toString(expenses.getInt(Constants.PARSE_AMOUNT)) + " " + expenses.getString("desc"));
+                       }
+                   }
+
+                   // Get ListView and set adapter
+                   layout = (ListView) findViewById(com.greyfieldstudios.budger.R.id.expenseListView);
+                   layout.setAdapter(adapter);
+               } else {
+                   Log.d("App", e.getMessage().toString());
+               }
+           }
+       });
 
         // Remove Dialog
         dialog.dismiss();
-
-        // Expense data
-        if(eq != null) {
-            // Build array adapter and set values from parse data
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-            for(ParseObject expenses : eq) {
-                adapter.add("$" + Integer.toString(expenses.getInt("amount")) + " " + expenses.getString("desc"));
-            }
-
-            // Get ListView and set adapter
-            layout = (ListView) findViewById(com.greyfieldstudios.budger.R.id.expenseListView);
-            layout.setAdapter(adapter);
-        }
     }
 
     private void addExpense() {
@@ -200,14 +220,10 @@ public class DailyActivity extends ActionBarActivity {
 
         // Hide keyboard
         hideKeyboard();
-
-        // Restart current activity to pickup new changes
-        //startActivity(new Intent(DailyActivity.this, DailyActivity.class));
     }
 
     public void getPreviousDay(View view) {
-        Log.d(Application.APPTAG,"Clicked on previous day");
-        //Calendar previous_day = Calendar.getInstance();
+
         Calendar previous_day = selected_date;
         previous_day.add(Calendar.DAY_OF_MONTH, -1);
 
@@ -221,9 +237,7 @@ public class DailyActivity extends ActionBarActivity {
     }
 
     public void getNextDay(View view) {
-        Log.d(Application.APPTAG, "Click on next day");
 
-        //Calendar previous_day = Calendar.getInstance();
         Calendar previous_day = selected_date;
         previous_day.add(Calendar.DAY_OF_MONTH, 1);
 

@@ -11,6 +11,9 @@
     <!-- activity_login -->
     <string name="button_login">Login</string>
 
+    <!-- Activties -->
+    <string name="daily_activity_label">Budger Daily</string>
+
     <!-- activity_submit_budget -->
     <string name="total_budget_amount">Budget Amount:</string>
     <string name="submit_budget">Submit Budget</string>
