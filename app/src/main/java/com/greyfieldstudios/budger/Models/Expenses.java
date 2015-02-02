@@ -5,6 +5,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -16,7 +17,7 @@ import java.util.Date;
 @ParseClassName("Expenses")
 public class Expenses extends ParseObject {
 
-    public void setAmount(int amount) {
+    public void setAmount(BigDecimal amount) {
         put("amount", amount);
     }
 

@@ -12,4 +12,12 @@ public class Constants {
 
     public final static String PARSE_EXPENSES_OBJECT = "Expenses";
     public final static String PARSE_BUDGET_OBJECT = "Budget";
+
+    public final static String DIALOG_LOADING_MONTHLY_LEDGER = "Loading Monthly Ledger.";
+
+    public final static String[] MONTHNAME = {
+            "January", "February", "March", "April", "May",
+            "June", "July", "August", "September", "October", "November",
+            "December"
+    };
 }

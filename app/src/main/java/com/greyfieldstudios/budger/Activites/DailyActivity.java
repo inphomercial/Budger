@@ -34,6 +34,7 @@ import com.parse.SaveCallback;
 
 import org.w3c.dom.Text;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -171,7 +172,7 @@ public class DailyActivity extends ActionBarActivity {
 
                        // Compare selected_date against each of the ParseObjects
                        if(selected_date.get(Calendar.DAY_OF_MONTH) == expense_cal.get(Calendar.DAY_OF_MONTH)) {
-                           adapter.add("$" + Integer.toString(expenses.getInt(Constants.PARSE_AMOUNT)) + " " + expenses.getString("desc"));
+                           adapter.add("$" + Double.toString(expenses.getDouble(Constants.PARSE_AMOUNT)) + " " + expenses.getString("desc"));
                        }
                    }
 
@@ -197,7 +198,8 @@ public class DailyActivity extends ActionBarActivity {
         // Get Expense Amount
         expenseAmount = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_amount_text);
         String ex = expenseAmount.getText().toString();
-        int expense_amount = Integer.parseInt(ex);
+        //long expense_amount = Integer.parseInt(ex);
+        BigDecimal expense_amount = new BigDecimal(ex);
 
         // Get Expense Desc
         expenseDesc = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_desc_text);
@@ -222,11 +224,11 @@ public class DailyActivity extends ActionBarActivity {
             }
         });
 
-        // Modify days remaining
+        // Modify spendable remaining
         tvSpendable = (TextView) findViewById(com.greyfieldstudios.budger.R.id.spendable_value);
-        int tvSpendableValue = Integer.parseInt(tvSpendable.getText().toString());
-        int total = tvSpendableValue - expense_amount;
-        tvSpendable.setText(Integer.toString(total));
+        BigDecimal tvSpendableValue = new BigDecimal(tvSpendable.getText().toString());
+        tvSpendableValue.subtract(expense_amount);
+        tvSpendable.setText(tvSpendableValue.toPlainString());
 
         // Clear Expense fields
         expenseAmount.setText("");
@@ -283,13 +285,23 @@ public class DailyActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         // Logout
-        if (id == com.greyfieldstudios.budger.R.id.menu_logout) {
+        if (id == R.id.menu_logout) {
             logout();
         }
 
+        // Daily Activity
+        if(id == R.id.activity) {
+            startActivity(new Intent(this, DailyActivity.class));
+        }
+
         // Daily Ledger
-        if(id == com.greyfieldstudios.budger.R.id.daily) {
+        if(id == R.id.daily) {
             startActivity(new Intent(this, DailyLedgerActivity.class));
+        }
+
+        // Monthly Ledger
+        if(id == R.id.monthly) {
+            startActivity(new Intent(this, MonthlyLedgerActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

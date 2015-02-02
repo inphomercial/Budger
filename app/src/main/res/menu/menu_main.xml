@@ -5,6 +5,12 @@
     tools:context=".MainActivity">
 
     <item
+        android:id="@+id/activity"
+        android:title="Daily Activity"
+        android:orderInCategory="0"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/daily"
         android:title="Daily Ledger"
         android:orderInCategory="100"

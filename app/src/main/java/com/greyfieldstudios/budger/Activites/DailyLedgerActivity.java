@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.greyfieldstudios.budger.Application;
 import com.greyfieldstudios.budger.Models.Expenses;
+import com.greyfieldstudios.budger.R;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.Parse;
@@ -143,14 +144,24 @@ public class DailyLedgerActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        // Daily Ledger Menu Item
-        if(id == com.greyfieldstudios.budger.R.string.title_activity_daily_ledger) {
+        // Logout
+        if (id == R.id.menu_logout) {
+            logout();
+        }
+
+        // Daily Activity
+        if(id == R.id.activity) {
+            startActivity(new Intent(this, DailyActivity.class));
+        }
+
+        // Daily Ledger
+        if(id == R.id.daily) {
             startActivity(new Intent(this, DailyLedgerActivity.class));
         }
 
-        // Logout Menu Item
-        if(id == com.greyfieldstudios.budger.R.string.logout) {
-           logout();
+        // Monthly Ledger
+        if(id == R.id.monthly) {
+            startActivity(new Intent(this, MonthlyLedgerActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

@@ -45,6 +45,10 @@
             android:name=".Activites.DailyLedgerActivity"
             android:label="@string/title_activity_daily_ledger" >
         </activity>
+        <activity
+            android:name=".Activites.MonthlyLedgerActivity"
+            android:label="@string/title_activity_monthly_ledger" >
+        </activity>
     </application>
 
 </manifest>
