@@ -43,7 +43,6 @@ public class DailyLedgerActivity extends ActionBarActivity {
         dialog.setMessage("Gathering Daily Ledger Info");
         dialog.show();
 
-        // Get all expenses for user for the entire month
         // Generate a calendar for the start of the month
         Calendar start_c = Calendar.getInstance();
         start_c.set(Calendar.DAY_OF_MONTH, 1);
@@ -53,7 +52,7 @@ public class DailyLedgerActivity extends ActionBarActivity {
         int days_in_month = end_c.getActualMaximum(Calendar.DAY_OF_MONTH);
         end_c.set(Calendar.DAY_OF_MONTH, days_in_month);
 
-        // Get all expenses for user based on day
+        // Get all expenses for user based on month
         ParseObject user = ParseUser.getCurrentUser();
         ParseQuery<ParseObject> expense_query = new ParseQuery<ParseObject>("Expenses");
         expense_query.whereEqualTo("user", user);
