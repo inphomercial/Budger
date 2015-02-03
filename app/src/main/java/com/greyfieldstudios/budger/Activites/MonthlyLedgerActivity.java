@@ -61,7 +61,7 @@ public class MonthlyLedgerActivity extends ActionBarActivity {
                         for (ParseObject expense : parseObjects) {
 
                             // Get the expese created date and convert it to a Calendar object
-                            Date created = expense.getCreatedAt();
+                            Date created = expense.getDate(Constants.PARSE_DATE);
                             Calendar expense_cal = Calendar.getInstance();
                             expense_cal.setTime(created);
 

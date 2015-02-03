@@ -1,5 +1,6 @@
 package com.greyfieldstudios.budger.Models;
 
+import com.greyfieldstudios.budger.Constants;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -18,24 +19,26 @@ import java.util.Date;
 public class Expenses extends ParseObject {
 
     public void setAmount(BigDecimal amount) {
-        put("amount", amount);
+        put(Constants.PARSE_AMOUNT, amount);
     }
 
     public void setDesc(String desc) {
-        put("desc", desc);
+        put(Constants.PARSE_DESC, desc);
     }
 
     public void setUser(ParseUser user) {
-        put("user", user);
+        put(Constants.PARSE_USER, user);
     }
 
-    public void setDate(Integer num) {
+    public void setDate(Calendar num) {
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_MONTH, num);
+        //Calendar cal = Calendar.getInstance();
 
-        Date DD = cal.getTime();
-        put("createdAt", DD);
+        //Calendar cal = (Calendar)num.clone();
+        //cal.set(Calendar.DAY_OF_MONTH, num);
+
+        Date DD = num.getTime();
+        put(Constants.PARSE_DATE, DD);
     }
 
     /* public String getExpense() {

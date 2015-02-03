@@ -1,12 +1,16 @@
 package com.greyfieldstudios.budger.Activites;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +18,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -108,12 +113,51 @@ public class DailyActivity extends ActionBarActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addExpense();
+
+                //addExpense();
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(DailyActivity.this);
+
+                // Set the view to use a pre-created layout
+                alert.setView(R.layout.dialog_add_expense);
+
+                alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        LayoutInflater inflater = getLayoutInflater();
+                        View view = inflater.inflate(R.layout.dialog_add_expense, null);
+
+                        // Get Amount
+                        TextView amount = (TextView) view.findViewById(R.id.dialog_expense);
+
+                        // Get Desc
+                        TextView desc = (TextView)view.findViewById(R.id.dialog_desc);
+
+                        Log.d("App", desc.getText().toString());
+                        Log.d("App", amount.getText().toString());
+                        //String a = amount.getText().toString();
+                        //BigDecimal amount = new BigDecimal(a);
+
+                        //String desc = desc.getText().toString();
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        return;
+                    }
+                });
+
+                alert.show();
             }
         });
 
         // Get Parse Data for user
-        gatherParseDataForUser(selected_date);
+        gatherParseDataForUser();
+
+
     }
 
     // Ensure that you cannot browse beyond current date
@@ -125,7 +169,7 @@ public class DailyActivity extends ActionBarActivity {
         }
     }
 
-    private void gatherParseDataForUser(final Calendar selected_date) {
+    private void gatherParseDataForUser() {
 
         Log.d("App", "Gathering Data for the date of " + selected_date.getTime());
 
@@ -166,7 +210,7 @@ public class DailyActivity extends ActionBarActivity {
                    for(ParseObject expenses : objects) {
 
                        // Convert ParseObject Date to Calendar to compare
-                       Date expense_date = expenses.getCreatedAt();
+                       Date expense_date = expenses.getDate(Constants.PARSE_DATE);
                        Calendar expense_cal = Calendar.getInstance();
                        expense_cal.setTime(expense_date);
 
@@ -198,7 +242,6 @@ public class DailyActivity extends ActionBarActivity {
         // Get Expense Amount
         expenseAmount = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_amount_text);
         String ex = expenseAmount.getText().toString();
-        //long expense_amount = Integer.parseInt(ex);
         BigDecimal expense_amount = new BigDecimal(ex);
 
         // Get Expense Desc
@@ -207,7 +250,7 @@ public class DailyActivity extends ActionBarActivity {
         // Add a new Expense object
         Expenses expense = new Expenses();
         expense.setAmount(expense_amount);
-        //expense.setDate(selected_date.get(Calendar.DAY_OF_MONTH));
+        expense.setDate(selected_date);
         expense.setDesc(expenseDesc.getText().toString());
         expense.setUser(ParseUser.getCurrentUser());
 
@@ -220,7 +263,12 @@ public class DailyActivity extends ActionBarActivity {
         expense.saveInBackground(new SaveCallback() {
             @Override
             public void done(com.parse.ParseException e) {
-                dialog.dismiss();
+
+                if(e == null) {
+                    dialog.dismiss();
+                } else {
+                    Log.d("App", e.getMessage());
+                }
             }
         });
 
@@ -243,15 +291,14 @@ public class DailyActivity extends ActionBarActivity {
 
     public void getParseDataForDay(int increment) {
 
-        Calendar next_day = selected_date;
-        next_day.add(Calendar.DAY_OF_MONTH, increment);
+        selected_date.add(Calendar.DAY_OF_MONTH, increment);
 
-        gatherParseDataForUser(next_day);
+        gatherParseDataForUser();
 
         // Setting the date place holder with todays date
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
         TextView dateText = (TextView) findViewById(com.greyfieldstudios.budger.R.id.date_text);
-        dateText.setText(sdf.format(next_day.getTime()));
+        dateText.setText(sdf.format(selected_date.getTime()));
     }
 
     public void logout() {

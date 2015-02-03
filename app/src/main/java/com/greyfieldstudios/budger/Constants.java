@@ -5,8 +5,9 @@ package com.greyfieldstudios.budger;
  */
 public class Constants {
     public final static String PARSE_USER = "user";
-    public final static String PARSE_CREATED_AT = "createdAt";
+    public final static String PARSE_DATE = "date";
     public final static String PARSE_REMAINING = "remaining";
+    public final static String PARSE_DESC = "desc";
     public final static String PARSE_AMOUNT = "amount";
     public final static String PARSE_DAILY_BUDGET = "daily_budget";
 

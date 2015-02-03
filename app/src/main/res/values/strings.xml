@@ -7,6 +7,9 @@
 
     <!-- Menu items -->
     <string name="logout">Logout</string>
+    <string name="menu_daily_activity">Daily Activity</string>
+    <string name="menu_month_ledger">Month Ledger</string>
+    <string name="menu_year_ledger">Year Ledger</string>
 
     <!-- activity_login -->
     <string name="button_login">Login</string>

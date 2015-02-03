@@ -103,8 +103,7 @@
         android:id="@+id/submitExpenseButton"
         android:layout_marginBottom="23dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="addExpense"/>
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/spendable_value"

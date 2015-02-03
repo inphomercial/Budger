@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.greyfieldstudios.budger.Application;
+import com.greyfieldstudios.budger.Constants;
 import com.greyfieldstudios.budger.Models.Expenses;
 import com.greyfieldstudios.budger.R;
 import com.parse.FindCallback;
@@ -57,8 +58,10 @@ public class DailyLedgerActivity extends ActionBarActivity {
         ParseObject user = ParseUser.getCurrentUser();
         ParseQuery<ParseObject> expense_query = new ParseQuery<ParseObject>("Expenses");
         expense_query.whereEqualTo("user", user);
-        expense_query.whereLessThan("createdAt", end_c.getTime());
-        expense_query.whereGreaterThan("createdAt", start_c.getTime());
+        //expense_query.whereLessThan("createdAt", end_c.getTime());
+        //expense_query.whereGreaterThan("createdAt", start_c.getTime());
+        expense_query.whereLessThan(Constants.PARSE_DATE, end_c.getTime());
+        expense_query.whereGreaterThan(Constants.PARSE_DATE, start_c.getTime());
         expense_query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -86,7 +89,7 @@ public class DailyLedgerActivity extends ActionBarActivity {
                         for(ParseObject expenses : parseObjects) {
 
                             // Convert ParseObject Date to Calendar to compare
-                            Date expense_date = expenses.getCreatedAt();
+                            Date expense_date = expenses.getDate(Constants.PARSE_DATE);
                             Calendar expense_cal = Calendar.getInstance();
                             expense_cal.setTime(expense_date);
 
