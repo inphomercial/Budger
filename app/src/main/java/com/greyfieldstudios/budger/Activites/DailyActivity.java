@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.greyfieldstudios.budger.Application;
 import com.greyfieldstudios.budger.Constants;
@@ -114,9 +115,9 @@ public class DailyActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                //addExpense();
+                addExpense();
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(DailyActivity.this);
+                /*AlertDialog.Builder alert = new AlertDialog.Builder(DailyActivity.this);
 
                 // Set the view to use a pre-created layout
                 alert.setView(R.layout.dialog_add_expense);
@@ -124,6 +125,7 @@ public class DailyActivity extends ActionBarActivity {
                 alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
+                        // Get inflater and inflate xml view
                         LayoutInflater inflater = getLayoutInflater();
                         View view = inflater.inflate(R.layout.dialog_add_expense, null);
 
@@ -131,7 +133,7 @@ public class DailyActivity extends ActionBarActivity {
                         TextView amount = (TextView) view.findViewById(R.id.dialog_expense);
 
                         // Get Desc
-                        TextView desc = (TextView)view.findViewById(R.id.dialog_desc);
+                        TextView desc = (TextView) view.findViewById(R.id.dialog_desc);
 
                         Log.d("App", desc.getText().toString());
                         Log.d("App", amount.getText().toString());
@@ -150,7 +152,7 @@ public class DailyActivity extends ActionBarActivity {
                     }
                 });
 
-                alert.show();
+                alert.show();*/
             }
         });
 
@@ -241,11 +243,25 @@ public class DailyActivity extends ActionBarActivity {
 
         // Get Expense Amount
         expenseAmount = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_amount_text);
-        String ex = expenseAmount.getText().toString();
-        BigDecimal expense_amount = new BigDecimal(ex);
 
         // Get Expense Desc
         expenseDesc = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_desc_text);
+
+        // What;s a good way to verify not empty ?!
+        if(isEmpty(expenseAmount)) {
+            dialog.dismiss();
+            Toast.makeText(getApplicationContext(), "Set an amount!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Set desc to empty string if it's empty
+        if(isEmpty(expenseDesc)) {
+            expenseDesc.setText("");
+        }
+
+        // Convert Amount to a BigDecimal
+        String ex = expenseAmount.getText().toString();
+        BigDecimal expense_amount = new BigDecimal(ex);
 
         // Add a new Expense object
         Expenses expense = new Expenses();
@@ -299,6 +315,10 @@ public class DailyActivity extends ActionBarActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
         TextView dateText = (TextView) findViewById(com.greyfieldstudios.budger.R.id.date_text);
         dateText.setText(sdf.format(selected_date.getTime()));
+    }
+
+    private boolean isEmpty(TextView tvText) {
+        return tvText.getText().toString().trim().length() == 0;
     }
 
     public void logout() {
