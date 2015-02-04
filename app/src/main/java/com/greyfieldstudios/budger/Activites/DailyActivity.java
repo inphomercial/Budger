@@ -1,13 +1,16 @@
 package com.greyfieldstudios.budger.Activites;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.greyfieldstudios.budger.AddExpenseFragment;
 import com.greyfieldstudios.budger.Application;
 import com.greyfieldstudios.budger.Constants;
 import com.greyfieldstudios.budger.Models.Expenses;
@@ -55,44 +59,55 @@ public class DailyActivity extends ActionBarActivity {
     private TextView tvSpendable;
     private TextView expenseAmount;
     private TextView expenseDesc;
+    private TextView loggingInUser;
+    private TextView dateText;
 
-    String remaining;
-    String loggedInUser;
+    private Calendar selected_date;
+    private Calendar todays_date;
 
-    ListView layout;
-    List<ParseObject> eq;
-    List<ParseObject> bq;
+    private ImageButton previousDay;
+    private ImageButton nextDay;
 
-    ImageButton previousDay;
-    ImageButton nextDay;
+    private ListView layout;
 
-    Calendar selected_date;
-    Calendar todays_date;
+    private Button submit;
 
-    Menu menu;
+    //String remaining;
+    //private String loggedInUser;
 
+    //List<ParseObject> eq;
+    //List<ParseObject> bq;
+
+    //Menu menu;
+
+    // Do all setup and init here!
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(com.greyfieldstudios.budger.R.layout.activity_daily);
 
+        // Init all layout object references
+        init();
+    }
+
+
+    // Do all the things here!
+    @Override
+    public void onResume() {
+        super.onResume();
+
         todays_date = Calendar.getInstance();
-        expenseAmount = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_amount_text);
-        expenseDesc = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_desc_text);
 
         // Set the date text with selected date
         selected_date = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-        TextView dateText = (TextView) findViewById(com.greyfieldstudios.budger.R.id.date_text);
         dateText.setText(sdf.format(selected_date.getTime()));
 
         // Show currently logged in users name
-        loggedInUser = ParseUser.getCurrentUser().getUsername();
-        TextView loggingInUser = (TextView) findViewById(com.greyfieldstudios.budger.R.id.textViewLoggedInUser);
+        String loggedInUser = ParseUser.getCurrentUser().getUsername();
         loggingInUser.setText(loggedInUser);
 
-        // Get NextDay button and setup event listener
-        nextDay = (ImageButton) findViewById(R.id.forwardButton);
+        // NextDay button event listener
         nextDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +116,6 @@ public class DailyActivity extends ActionBarActivity {
         });
 
         // Get PreviousDay button and setup event listener
-        previousDay = (ImageButton) findViewById(R.id.backButton);
         previousDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,10 +124,15 @@ public class DailyActivity extends ActionBarActivity {
         });
 
         // Setup the add expense button
-        Button submit = (Button) findViewById(com.greyfieldstudios.budger.R.id.submitExpenseButton);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Fragment stuff
+                /*FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+                trans.add(R.id.dailyRelativeLayout, new AddExpenseFragme∫nt());
+                trans.addToBackStack("");
+                trans.commit();*/
 
                 addExpense();
 
@@ -158,8 +177,23 @@ public class DailyActivity extends ActionBarActivity {
 
         // Get Parse Data for user
         gatherParseDataForUser();
+    }
 
+    private void init() {
 
+        dateText = (TextView) findViewById(com.greyfieldstudios.budger.R.id.date_text);
+        //expenseAmount = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_amount_text);
+        //expenseDesc = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_desc_text);
+        tvDaily = (TextView) findViewById(com.greyfieldstudios.budger.R.id.daily_budget_amount_value);
+        tvSpendable = (TextView) findViewById(com.greyfieldstudios.budger.R.id.spendable_value);
+        loggingInUser = (TextView) findViewById(com.greyfieldstudios.budger.R.id.textViewLoggedInUser);
+
+        nextDay = (ImageButton) findViewById(R.id.forwardButton);
+        previousDay = (ImageButton) findViewById(R.id.backButton);
+
+        layout = (ListView) findViewById(com.greyfieldstudios.budger.R.id.expenseListView);
+
+        submit = (Button) findViewById(com.greyfieldstudios.budger.R.id.submitExpenseButton);
     }
 
     // Ensure that you cannot browse beyond current date
@@ -190,18 +224,13 @@ public class DailyActivity extends ActionBarActivity {
         budget_query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject parseObject, ParseException e) {
-                tvDaily = (TextView) findViewById(com.greyfieldstudios.budger.R.id.daily_budget_amount_value);
                 tvDaily.setText(Integer.toString(parseObject.getInt(Constants.PARSE_DAILY_BUDGET)));
-
-                tvSpendable = (TextView) findViewById(com.greyfieldstudios.budger.R.id.spendable_value);
                 tvSpendable.setText(Integer.toString(parseObject.getInt(Constants.PARSE_REMAINING)));
             }
         });
 
-        // Initialize ListView & Adapter
-        layout = (ListView) findViewById(com.greyfieldstudios.budger.R.id.expenseListView);
+        // Reset layout adapter
         layout.setAdapter(null);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 
         // Expense Data Query
         ParseQuery<ParseObject> expense_query = new ParseQuery<ParseObject>(Constants.PARSE_EXPENSES_OBJECT);
@@ -209,6 +238,16 @@ public class DailyActivity extends ActionBarActivity {
         expense_query.findInBackground(new FindCallback<ParseObject>() {
            public void done(List<ParseObject> objects, ParseException e) {
                if (e == null) {
+
+                   ArrayAdapter<String> adapter;
+                   if(layout.getAdapter() == null)
+                   {
+                        adapter = new ArrayAdapter<String>(DailyActivity.this, android.R.layout.simple_list_item_1);
+                   }else{
+                        adapter = (ArrayAdapter<String>) layout.getAdapter();
+
+                   }
+
                    for(ParseObject expenses : objects) {
 
                        // Convert ParseObject Date to Calendar to compare
@@ -219,11 +258,13 @@ public class DailyActivity extends ActionBarActivity {
                        // Compare selected_date against each of the ParseObjects
                        if(selected_date.get(Calendar.DAY_OF_MONTH) == expense_cal.get(Calendar.DAY_OF_MONTH)) {
                            adapter.add("$" + Double.toString(expenses.getDouble(Constants.PARSE_AMOUNT)) + " " + expenses.getString("desc"));
+                           adapter.notifyDataSetChanged();
                        }
                    }
 
                    // Get ListView and set adapter
                    layout.setAdapter(adapter);
+
                } else {
                    Log.d("App", e.getMessage().toString());
                }
@@ -241,21 +282,14 @@ public class DailyActivity extends ActionBarActivity {
         dialog.setMessage("Adding expense");
         dialog.show();
 
-        // Get Expense Amount
-        expenseAmount = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_amount_text);
-
-        // Get Expense Desc
-        expenseDesc = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_desc_text);
-
-        // What;s a good way to verify not empty ?!
-        if(isEmpty(expenseAmount)) {
+        if(TextUtils.isEmpty(expenseAmount.getText())) {
             dialog.dismiss();
             Toast.makeText(getApplicationContext(), "Set an amount!", Toast.LENGTH_LONG).show();
             return;
         }
 
         // Set desc to empty string if it's empty
-        if(isEmpty(expenseDesc)) {
+        if(TextUtils.isEmpty(expenseDesc.getText())) {
             expenseDesc.setText("");
         }
 
@@ -313,19 +347,7 @@ public class DailyActivity extends ActionBarActivity {
 
         // Setting the date place holder with todays date
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-        TextView dateText = (TextView) findViewById(com.greyfieldstudios.budger.R.id.date_text);
         dateText.setText(sdf.format(selected_date.getTime()));
-    }
-
-    private boolean isEmpty(TextView tvText) {
-        return tvText.getText().toString().trim().length() == 0;
-    }
-
-    public void logout() {
-        ParseUser.logOut();
-        Intent intent = new Intent(DailyActivity.this, DispatchActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     private void hideKeyboard() {
@@ -353,7 +375,7 @@ public class DailyActivity extends ActionBarActivity {
 
         // Logout
         if (id == R.id.menu_logout) {
-            logout();
+            Application.logout(this);
         }
 
         // Daily Activity

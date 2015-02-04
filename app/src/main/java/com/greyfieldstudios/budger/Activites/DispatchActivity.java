@@ -47,5 +47,8 @@ public class DispatchActivity extends Activity {
             // Start an intent for the logged out activity
             startActivity(new Intent(this, WelcomeActivity.class));
         }
+
+        // End the dispatchActivity
+        finish();
     }
 }
