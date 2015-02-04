@@ -10,6 +10,8 @@ import com.parse.Parse;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.util.Calendar;
+
 /**
  * Created by inpho on 1/25/2015.
  */
@@ -18,6 +20,8 @@ public class Application extends android.app.Application {
     public static final String APPTAG = "Budger";
 
     public Application() {}
+
+    public static Calendar selected_date;
 
     @Override
     public void onCreate() {

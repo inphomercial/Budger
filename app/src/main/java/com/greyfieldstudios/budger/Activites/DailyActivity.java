@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -53,7 +54,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 
-public class DailyActivity extends ActionBarActivity {
+public class DailyActivity extends FragmentActivity {
 
     private TextView tvDaily;
     private TextView tvSpendable;
@@ -71,14 +72,6 @@ public class DailyActivity extends ActionBarActivity {
     private ListView layout;
 
     private Button submit;
-
-    //String remaining;
-    //private String loggedInUser;
-
-    //List<ParseObject> eq;
-    //List<ParseObject> bq;
-
-    //Menu menu;
 
     // Do all setup and init here!
     @Override
@@ -99,9 +92,9 @@ public class DailyActivity extends ActionBarActivity {
         todays_date = Calendar.getInstance();
 
         // Set the date text with selected date
-        selected_date = Calendar.getInstance();
+        Application.selected_date = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-        dateText.setText(sdf.format(selected_date.getTime()));
+        dateText.setText(sdf.format(Application.selected_date.getTime()));
 
         // Show currently logged in users name
         String loggedInUser = ParseUser.getCurrentUser().getUsername();
@@ -129,49 +122,11 @@ public class DailyActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 // Fragment stuff
-                FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-                trans.add(R.id.dailyRelativeLayout, new AddExpenseFragment());
-                trans.addToBackStack("");
-                trans.commit();
-
-                //addExpense();
-
-                /*AlertDialog.Builder alert = new AlertDialog.Builder(DailyActivity.this);
-
-                // Set the view to use a pre-created layout
-                alert.setView(R.layout.dialog_add_expense);
-
-                alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        // Get inflater and inflate xml view
-                        LayoutInflater inflater = getLayoutInflater();
-                        View view = inflater.inflate(R.layout.dialog_add_expense, null);
-
-                        // Get Amount
-                        TextView amount = (TextView) view.findViewById(R.id.dialog_expense);
-
-                        // Get Desc
-                        TextView desc = (TextView) view.findViewById(R.id.dialog_desc);
-
-                        Log.d("App", desc.getText().toString());
-                        Log.d("App", amount.getText().toString());
-                        //String a = amount.getText().toString();
-                        //BigDecimal amount = new BigDecimal(a);
-
-                        //String desc = desc.getText().toString();
-                    }
-                });
-
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        return;
-                    }
-                });
-
-                alert.show();*/
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.add(R.id.add_expense_fragment_placeholder, new AddExpenseFragment());
+                //ft.replace(R.id.add_expense_fragment_placeholder, new AddExpenseFragment());
+                ft.addToBackStack("");
+                ft.commit();
             }
         });
 
@@ -182,8 +137,6 @@ public class DailyActivity extends ActionBarActivity {
     private void init() {
 
         dateText = (TextView) findViewById(com.greyfieldstudios.budger.R.id.date_text);
-        //expenseAmount = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_amount_text);
-        //expenseDesc = (TextView) findViewById(com.greyfieldstudios.budger.R.id.expense_desc_text);
         tvDaily = (TextView) findViewById(com.greyfieldstudios.budger.R.id.daily_budget_amount_value);
         tvSpendable = (TextView) findViewById(com.greyfieldstudios.budger.R.id.spendable_value);
         loggingInUser = (TextView) findViewById(com.greyfieldstudios.budger.R.id.textViewLoggedInUser);
@@ -207,10 +160,10 @@ public class DailyActivity extends ActionBarActivity {
 
     private void gatherParseDataForUser() {
 
-        Log.d("App", "Gathering Data for the date of " + selected_date.getTime());
+        Log.d("App", "Gathering Data for the date of " + Application.selected_date.getTime());
 
         // Ensure that you cannot browser beyond current date
-        checkNextDayButtonState(todays_date, selected_date);
+        checkNextDayButtonState(todays_date, Application.selected_date);
 
         final ProgressDialog dialog = new ProgressDialog(DailyActivity.this);
         dialog.setMessage("Getting user data");
@@ -256,7 +209,7 @@ public class DailyActivity extends ActionBarActivity {
                        expense_cal.setTime(expense_date);
 
                        // Compare selected_date against each of the ParseObjects
-                       if(selected_date.get(Calendar.DAY_OF_MONTH) == expense_cal.get(Calendar.DAY_OF_MONTH)) {
+                       if(Application.selected_date.get(Calendar.DAY_OF_MONTH) == expense_cal.get(Calendar.DAY_OF_MONTH)) {
                            adapter.add("$" + Double.toString(expenses.getDouble(Constants.PARSE_AMOUNT)) + " " + expenses.getString("desc"));
                            adapter.notifyDataSetChanged();
                        }
@@ -275,79 +228,15 @@ public class DailyActivity extends ActionBarActivity {
         dialog.dismiss();
     }
 
-    private void addExpense() {
-
-        // Start the progress dialog
-        final ProgressDialog dialog = new ProgressDialog(DailyActivity.this);
-        dialog.setMessage("Adding expense");
-        dialog.show();
-
-        if(TextUtils.isEmpty(expenseAmount.getText())) {
-            dialog.dismiss();
-            Toast.makeText(getApplicationContext(), "Set an amount!", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        // Set desc to empty string if it's empty
-        if(TextUtils.isEmpty(expenseDesc.getText())) {
-            expenseDesc.setText("");
-        }
-
-        // Convert Amount to a BigDecimal
-        String ex = expenseAmount.getText().toString();
-        BigDecimal expense_amount = new BigDecimal(ex);
-
-        // Add a new Expense object
-        Expenses expense = new Expenses();
-        expense.setAmount(expense_amount);
-        expense.setDate(selected_date);
-        expense.setDesc(expenseDesc.getText().toString());
-        expense.setUser(ParseUser.getCurrentUser());
-
-        // Set object Permissions
-        ParseACL acl = new ParseACL();
-        acl.setPublicReadAccess(true);
-        expense.setACL(acl);
-
-        // Save object in background
-        expense.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(com.parse.ParseException e) {
-
-                if(e == null) {
-                    dialog.dismiss();
-                } else {
-                    Log.d("App", e.getMessage());
-                }
-            }
-        });
-
-        // Modify spendable remaining
-        tvSpendable = (TextView) findViewById(com.greyfieldstudios.budger.R.id.spendable_value);
-        BigDecimal tvSpendableValue = new BigDecimal(tvSpendable.getText().toString());
-        tvSpendableValue.subtract(expense_amount);
-        tvSpendable.setText(tvSpendableValue.toPlainString());
-
-        // Clear Expense fields
-        expenseAmount.setText("");
-        expenseDesc.setText("");
-
-        // Remove focus from fields
-        layout.requestFocus();
-
-        // Hide keyboard
-        hideKeyboard();
-    }
-
     public void getParseDataForDay(int increment) {
 
-        selected_date.add(Calendar.DAY_OF_MONTH, increment);
+        Application.selected_date.add(Calendar.DAY_OF_MONTH, increment);
 
         gatherParseDataForUser();
 
         // Setting the date place holder with todays date
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-        dateText.setText(sdf.format(selected_date.getTime()));
+        dateText.setText(sdf.format(Application.selected_date.getTime()));
     }
 
     private void hideKeyboard() {

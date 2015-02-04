@@ -28,9 +28,39 @@ public class AddExpenseFragment extends Fragment {
     private EditText etDesc;
 
     private Button btnSubmit;
+    private Button btnCancel;
 
     private View view;
 
+    // Creates a new fragment given an int and title
+    // DemoFragment.newInstance(5, "Hello");
+    /*public static AddExpenseFragment newInstance(Calendar selected_date) {
+        AddExpenseFragment fragmentDemo = new AddExpenseFragment();
+        Bundle args = new Bundle();
+        args.put("selected_date", selected_date);
+        fragmentDemo.setArguments(args);
+        return fragmentDemo;
+    }
+*/
+    // This event fires 1st, before creation of fragment or any views
+    // The onAttach method is called when the Fragment instance is associated with an Activity.
+    // This does not mean the Activity is fully initialized.
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+    }
+
+    // This event fires 2nd, before views are created for the fragment
+    // The onCreate method is called when the Fragment instance is being created, or re-created.
+    // Use onCreate for any standard setup that does not require the activity to be fully created
+    @Override
+    public void onCreate(Bundle savedInstance) {
+        super.onCreate(savedInstance);
+    }
+
+    // This event fires 3rd, and is the first time views are available in the fragment
+    // The onCreateView method is called when Fragment should create its View object hierarchy.
+    // Use onCreateView to get a handle to views as soon as they are freshly inflated
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,18 +72,22 @@ public class AddExpenseFragment extends Fragment {
         etAmount = (EditText) view.findViewById(R.id.etAmount);
         etDesc = (EditText) view.findViewById(R.id.etDesc);
         btnSubmit = (Button) view.findViewById(R.id.btn_add_expense);
+        btnCancel = (Button) view.findViewById(R.id.btnCancel);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addExpense();
+                getActivity().onBackPressed();
             }
         });
-
-        // Used to remove the fragment in place of a backpress
-       // getActivity().onBackPressed();
-
-        //addExpense();
 
         // Return view
         return view;
@@ -87,7 +121,7 @@ public class AddExpenseFragment extends Fragment {
         // Add a new Expense object
         Expenses expense = new Expenses();
         expense.setAmount(expense_amount);
-        //expense.setDate(selected_date);
+        expense.setDate(Application.selected_date);
         expense.setDesc(etDesc.getText().toString());
         expense.setUser(ParseUser.getCurrentUser());
 
@@ -108,28 +142,6 @@ public class AddExpenseFragment extends Fragment {
                 }
             }
         });
-
-        /*// Modify spendable remaining
-        tvSpendable = (TextView) findViewById(com.greyfieldstudios.budger.R.id.spendable_value);
-        BigDecimal tvSpendableValue = new BigDecimal(tvSpendable.getText().toString());
-        tvSpendableValue.subtract(expense_amount);
-        tvSpendable.setText(tvSpendableValue.toPlainString());
-
-        // Clear Expense fields
-        expenseAmount.setText("");
-        expenseDesc.setText("");
-
-        // Remove focus from fields
-        layout.requestFocus();
-
-        // Hide keyboard
-        hideKeyboard();*/
-    }
-
-    // my way of getting access
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
     }
 
     @Override
