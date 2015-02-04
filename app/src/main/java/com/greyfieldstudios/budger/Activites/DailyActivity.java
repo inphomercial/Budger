@@ -129,12 +129,12 @@ public class DailyActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 // Fragment stuff
-                /*FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-                trans.add(R.id.dailyRelativeLayout, new AddExpenseFragme∫nt());
+                FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+                trans.add(R.id.dailyRelativeLayout, new AddExpenseFragment());
                 trans.addToBackStack("");
-                trans.commit();*/
+                trans.commit();
 
-                addExpense();
+                //addExpense();
 
                 /*AlertDialog.Builder alert = new AlertDialog.Builder(DailyActivity.this);
 
@@ -250,7 +250,7 @@ public class DailyActivity extends ActionBarActivity {
 
                    for(ParseObject expenses : objects) {
 
-                       // Convert ParseObject Date to Calendar to compare
+                       // Convert ParseObject Date to CagetDatelendar to compare
                        Date expense_date = expenses.getDate(Constants.PARSE_DATE);
                        Calendar expense_cal = Calendar.getInstance();
                        expense_cal.setTime(expense_date);
